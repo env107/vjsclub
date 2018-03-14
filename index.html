@@ -1,0 +1,104 @@
+<html>
+    <head>
+            <script src="v.js"></script>
+    </head>
+    <body>
+
+        <div class="app" id="app"></div>
+        <script>
+            window.onload = function(){
+
+                var list = Vue.component("List",{
+                    props:{
+                        "data":{
+                            type:Array,
+                            required:true
+                        }
+                    },
+                    methods:{
+                        addTodosTotal:function(payload){
+                            console.log("你点击了："+payload.index);
+                            return true;
+                        }
+                    },
+                    template:'<div><ListItem v-on:ItemClick="addTodosTotal"   :key="index" v-for="(item,index) in data" :data="item"></ListItem></div>'
+                    
+                });
+
+                var listItem = Vue.component("ListItem",{
+                    props:{
+                        "data":{
+                            type:Object,
+                            required:true
+                        }
+                    },
+                    methods:{
+                        OnItemClick:function(index){
+                            this.$emit("ItemClick",{index:index});
+                            return true;
+                        }
+                    },
+                    template:"<div class='list-item'v-on:click='OnItemClick(data.id)' >{{ data.title }}</div>"
+                });
+
+                var todoform = Vue.component("TodoForm",{
+                    methods:{
+                        //添加事务
+                        AddTodo:function(){
+                            if(this.title == ''){
+                                alert("请输入标题");
+                                return false;
+                            }
+                            if(this.text == ''){
+                                alert("请输入描述");
+                                return false;
+                            }
+                            
+                            this.$emit("AddTodoItem",{title:this.title,text:this.text});
+                            this.title = "";
+                            this.text = "";
+                        }
+                    },
+                    data:function(){
+                        return {
+                            title:"",
+                            text:"",
+                        }
+                    },
+                    template:'\
+                            <div class="todo-form">\
+                                <input v-model="title" placeholder="请输入事务标题" style="display:block;width:100%" />\
+                                <input v-model="text" placeholder="请输入事务描述" style="display:block;width:100%" />\
+                                <button @click="AddTodo">添加</button>\
+                            </div>'
+                });
+
+                var app = Vue.component("app",{
+                    data:function(){
+                        return {
+                            version:'1.0',
+                            list:[
+                                {id:1,title:"事务1",text:"这是事务1"},
+                                {id:2,title:"事务2",text:"这是事务2"},
+                                {id:3,title:"事务3",text:"这是事务3"},
+                                {id:4,title:"事务4",text:"这是事务4"},
+                                {id:5,title:"事务5",text:"这是事务5"},
+                            ]
+                        }
+                    },
+                    methods:{
+                        AddTodoItem:function(payload){
+                            this.list.push({id:this.list.length,title:payload.title,text:payload.text});
+                        }
+                    },
+                    template:'<div><List :data="list" ></List><TodoForm v-on:AddTodoItem="AddTodoItem" /></div>'
+                });
+
+                var vm = new Vue({
+                    el:"#app",
+                    template:"<div><app /></div>"
+                });
+            }
+        </script>
+    </body>
+</html>

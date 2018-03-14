@@ -1,0 +1,39 @@
+<html>
+    <head>
+            <script src="v.js"></script>
+    </head>
+    <body>
+
+        <div class="app" id="app"></div>
+        <script>
+            window.onload = function(){
+
+                var container = Vue.component("container",{
+                    template:"<div>\
+                        <div class='container'>\
+                        <Header>\
+                           <slot name='header' version='1.2.1'></slot>     \
+                        </Header>\
+                        <Main>\
+                            <slot></slot>\
+                        </Main>\
+                        <Footer>\
+                            <slot name='footer'></slot>\
+                        </Footer>\
+                    "
+                });
+
+                var vm = new Vue({
+                    el:"#app",
+                    template:"<div><container>\
+                        <div slot='header' slot-scope='props'>\
+                            <span>这是头部内容 {{ props.version }}</span>\
+                        </div>\
+                        <span>这是主要的内容🀄</span>\
+                        <div slot='footer'>这是底部内容</div>\
+                    </container></div>"
+                });
+            }
+        </script>
+    </body>
+</html>
